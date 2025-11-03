@@ -33,7 +33,7 @@ public class Party : Entity
     private static Vector2 CalculatePartyPosition()
     {
         var x = 120 + ColliderWidth / 2;
-        var y = Core.Viewport.Height - 80 - ColliderHeight / 2;
+        var y = Core.ViewportAdapter.VirtualHeight - 80 - ColliderHeight / 2;
 
         return new Vector2(x, y);
     }

@@ -1,4 +1,6 @@
-﻿using Engine.Scenes;
+﻿using Desktop.Extensions;
+using Engine.Scenes;
+using Engine.ViewportAdapters;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,9 +12,13 @@ namespace Desktop
         private static Core _instance;
         public static Core Instance => _instance;
         public static Viewport Viewport => Instance.GraphicsDevice.Viewport;
+        public static ViewportAdapter ViewportAdapter => Instance._viewportAdapter;
 
-        private GraphicsDeviceManager _graphics;
+        private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        private ViewportAdapter _viewportAdapter;
+        private RenderTarget2D _sceneRenderTarget;
 
         private Scene _scene;
 
@@ -25,13 +31,23 @@ namespace Desktop
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-
-            _graphics.PreferredBackBufferWidth = 1280;
-            _graphics.PreferredBackBufferHeight = 720;
         }
 
         protected override void Initialize()
         {
+            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.ApplyChanges();
+
+            _viewportAdapter = new ScaleViewportAdapter(
+                GraphicsDevice
+                , 1280
+                , 720);
+            _sceneRenderTarget = new RenderTarget2D(
+                GraphicsDevice
+                , _viewportAdapter.VirtualWidth
+                , _viewportAdapter.VirtualHeight);
+
             _scene = new Scenes.SandboxScene(this);
 
             base.Initialize();
@@ -42,8 +58,6 @@ namespace Desktop
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
@@ -58,7 +72,15 @@ namespace Desktop
 
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(_sceneRenderTarget);
             _scene.Draw(gameTime);
+
+            var transformMatrix = _viewportAdapter.GetScaleMatrix();
+
+            GraphicsDevice.SetRenderTarget(null);
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: transformMatrix);
+            _spriteBatch.Draw(_sceneRenderTarget, Vector2.Zero, Color.White);
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
