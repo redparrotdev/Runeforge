@@ -31,7 +31,7 @@ public class Sprite : ISprite
 
     public Sprite CenterOrigin()
     {
-        return SetOrigin(new Vector2(Width / 2f, Height / 2f));
+        return SetOrigin(new Vector2(Texture.Width / 2f, Texture.Height / 2f));
     }
 
     public virtual void Draw(SpriteBatch spriteBatch, Vector2 position)
