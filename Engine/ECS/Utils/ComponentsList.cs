@@ -21,6 +21,8 @@ public class ComponentsList : IEnumerable<Component>
     private readonly List<IDraw> _drawable = [];
     private readonly List<Component> _toAdd = [];
     private readonly List<Component> _toRemove = [];
+    private readonly List<Component> _callAdded = [];
+    private readonly List<Component> _callRemoved = [];
 
     private bool _updating = false;
     private bool _dirtyUpdatable = false;
@@ -74,6 +76,7 @@ public class ComponentsList : IEnumerable<Component>
         }
 
         _all.Add(component);
+        _callAdded.Add(component);
 
         if (component is IUpdate updatable)
         {
@@ -102,6 +105,7 @@ public class ComponentsList : IEnumerable<Component>
         }
 
         _all.Remove(component);
+        _callRemoved.Remove(component);
 
         if (component is IUpdate updatable)
         {
@@ -150,14 +154,19 @@ public class ComponentsList : IEnumerable<Component>
                 Add(component);
             }
 
+            _toAdd.Clear();
+        }
+
+        if (_callAdded.Count > 0)
+        {
             _updating = true;
-            foreach (var component in _toAdd)
+            foreach (var component in _callAdded)
             {
                 component.OnAddedToEntity(_entity);
             }
             _updating = false;
 
-            _toAdd.Clear();
+            _callAdded.Clear();
         }
 
         if (_toRemove.Count > 0)
@@ -167,14 +176,19 @@ public class ComponentsList : IEnumerable<Component>
                 Remove(component);
             }
 
+            _toRemove.Clear();
+        }
+
+        if (_callRemoved.Count > 0)
+        {
             _updating = true;
-            foreach (var component in _toRemove)
+            foreach (var component in _callRemoved)
             {
                 component.OnRemovedFromEntity(_entity);
             }
             _updating = false;
 
-            _toRemove.Clear();
+            _callRemoved.Clear();
         }
 
         if (_dirtyUpdatable)

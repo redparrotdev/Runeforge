@@ -20,6 +20,8 @@ public class EntitiesList : IEnumerable<Entity>
     private readonly List<Entity> _drawOrdered = [];
     private readonly List<Entity> _toAdd = [];
     private readonly List<Entity> _toRemove = [];
+    private readonly List<Entity> _callAdded = [];
+    private readonly List<Entity> _callRemoved = [];
     private readonly Dictionary<string, Entity> _byNamesLookup = [];
 
     private bool _updating = false;
@@ -71,6 +73,7 @@ public class EntitiesList : IEnumerable<Entity>
         }
 
         _all.Add(entity);
+        _callAdded.Add(entity);
         _byNamesLookup[entity.Name] = entity;
         _updateOrdered.Add(entity);
         _drawOrdered.Add(entity);
@@ -92,6 +95,7 @@ public class EntitiesList : IEnumerable<Entity>
         }
 
         _all.Remove(entity);
+        _callRemoved.Add(entity);
         _updateOrdered.Remove(entity);
         _drawOrdered.Remove(entity);
         _byNamesLookup.Remove(entity.Name);
@@ -119,14 +123,19 @@ public class EntitiesList : IEnumerable<Entity>
                 Add(entityToAdd);
             }
 
+            _toAdd.Clear();
+        }
+
+        if (_callAdded.Count > 0)
+        {
             _updating = true;
-            foreach (var addedEntity in _toAdd)
+            foreach (var addedEntity in _callAdded)
             {
                 addedEntity.OnAddedToScene(_scene);
             }
             _updating = false;
 
-            _toAdd.Clear();
+            _callAdded.Clear();
         }
 
         if (_toRemove.Count > 0)
@@ -136,14 +145,19 @@ public class EntitiesList : IEnumerable<Entity>
                 Remove(entityToRemove);
             }
 
+            _toRemove.Clear();
+        }
+
+        if (_callRemoved.Count > 0)
+        {
             _updating = true;
-            foreach (var removedEntity in _toRemove)
+            foreach (var removedEntity in _callRemoved)
             {
                 removedEntity.OnRemovedFromScene(_scene);
             }
             _updating = false;
 
-            _toRemove.Clear();
+            _callRemoved.Clear();
         }
 
         if (_collectionsDirty)
