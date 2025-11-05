@@ -6,7 +6,7 @@ namespace Engine.ECS;
 
 public abstract class UpdateComponent : Component, IUpdate
 {
-    private bool _isActive = false;
+    private bool _isActive = true;
     public bool IsActive
     {
         get => _isActive;
