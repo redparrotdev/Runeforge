@@ -22,6 +22,7 @@ public abstract class Scene : IDisposable
         Content = new ContentManager(game.Services, game.Content.RootDirectory);
         GraphicsDevice = game.GraphicsDevice;
         SpriteBatch = new SpriteBatch(GraphicsDevice);
+        Services = game.Services;
     }
 
     public virtual void Load()
