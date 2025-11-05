@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Engine.Helpers.Graphics;
+namespace Engine.Helpers;
 
 public static class ShapesHelper
 {
