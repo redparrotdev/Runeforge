@@ -7,7 +7,7 @@ namespace Engine.Components.Graphics;
 
 public class SpriteComponent : DrawComponent
 {
-    public readonly Sprite Sprite;
+    public Sprite Sprite { get; set; }
 
     public Color Color { get; set; } = Color.White;
     public float Rotation { get; set; } = 0f;
