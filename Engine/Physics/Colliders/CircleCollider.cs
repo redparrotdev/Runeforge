@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-
-namespace Engine.Physics.Colliders;
+﻿namespace Engine.Physics.Colliders;
 
 public class CircleCollider : Collider
 {
