@@ -23,21 +23,12 @@ public class SpriteComponent : DrawComponent
 
     public virtual Vector2 Position => Entity.Position;
 
-    protected Entity Entity;
+    public virtual float Width => Sprite.Texture.Width * Scale.X;
+    public virtual float Height => Sprite.Texture.Height * Scale.Y;
 
     public SpriteComponent(Sprite sprite)
     {
         Sprite = sprite;
-    }
-
-    public override void OnAddedToEntity(Entity entity)
-    {
-        Entity = entity;
-    }
-
-    public override void OnRemovedFromEntity(Entity entity)
-    {
-        Entity = null;
     }
 
     public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
