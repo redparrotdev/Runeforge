@@ -11,7 +11,8 @@ public class Entity : IUpdate, IDraw
 {
     public readonly string Name;
 
-    public readonly ComponentsList Components;
+    public ComponentsList Components { get; private set; }
+    public Scene Scene { get; private set; }
 
     private bool _isAlive = true;
     public bool IsAlive => _isAlive;
@@ -94,10 +95,14 @@ public class Entity : IUpdate, IDraw
     }
 
     public virtual void OnAddedToScene(Scene scene)
-    { }
+    {
+        Scene = scene;
+    }
 
     public virtual void OnRemovedFromScene(Scene scene)
-    { }
+    {
+        Scene = null;
+    }
 
     public void Update(GameTime gameTime)
     {

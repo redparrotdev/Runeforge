@@ -54,6 +54,7 @@ public class ComponentsList : IEnumerable<Component>
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
+        _updating = true;
         if (_drawable.Count > 0)
         {
             foreach (var component in _drawable)
@@ -63,6 +64,7 @@ public class ComponentsList : IEnumerable<Component>
                 component.Draw(spriteBatch, gameTime);
             }
         }
+        _updating = false;
     }
 
     public void Add(Component component)

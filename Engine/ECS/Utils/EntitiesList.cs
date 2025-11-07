@@ -51,6 +51,7 @@ public class EntitiesList : IEnumerable<Entity>
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
+        _updating = true;
         if (_drawOrdered.Count > 0)
         {
             foreach (var entity in _drawOrdered)
@@ -60,6 +61,7 @@ public class EntitiesList : IEnumerable<Entity>
                 entity.Draw(spriteBatch, gameTime);
             }
         }
+        _updating = false;
     }
 
     public void Add(Entity entity)
