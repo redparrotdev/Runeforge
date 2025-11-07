@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace Engine.Events;
@@ -6,6 +7,7 @@ namespace Engine.Events;
 public static class EventManager
 {
     private static bool _isDispatching = false;
+    private static readonly HashSet<BaseEvent> _toDispatch = [];
     private static readonly Dictionary<Type, List<EventSubscription>> _eventsSubscribtions = [];
 
     public static EventSubscription Subscribe<T>(Action<T> callback) where T : BaseEvent
@@ -23,34 +25,47 @@ public static class EventManager
         return subscription;
     }
 
-    public static void Dispatch(BaseEvent eventInstance)
+    public static void Update(GameTime gameTime)
     {
-        var eventType = eventInstance.GetType();
-        if (!_eventsSubscribtions.TryGetValue(eventType, out var subscribtionsList))
-        {
-            return;
-        }
-
         List<EventSubscription> inactiveSubscriptions = [];
 
         _isDispatching = true;
-        foreach (var subscription in subscribtionsList.ToArray())
+
+        foreach (var eventInstance in _toDispatch)
         {
-            if (subscription.IsActive)
+            var eventType = eventInstance.GetType();
+
+            if (!_eventsSubscribtions.TryGetValue(eventType, out var subscribtionsList))
             {
-                subscription.Callback(eventInstance);
+                continue;
             }
-            else
+
+            foreach (var subscription in subscribtionsList.ToArray())
             {
-                inactiveSubscriptions.Add(subscription);
+                if (subscription.IsActive)
+                {
+                    subscription.Callback(eventInstance);
+                }
+                else
+                {
+                    inactiveSubscriptions.Add(subscription);
+                }
             }
         }
+
+        _toDispatch.Clear();
+
         _isDispatching = false;
 
         foreach (var inactiveSubscription in inactiveSubscriptions)
         {
-            subscribtionsList.Remove(inactiveSubscription);
+            inactiveSubscription.Unsubscribe();
         }
+    }
+
+    public static void Dispatch(BaseEvent eventInstance)
+    {
+        _toDispatch.Add(eventInstance);
     }
 
     public sealed class EventSubscription
