@@ -6,6 +6,9 @@
 # Custom
 RawAssets
 
+# Desktop
+Desktop/Content/GUI/FontCache
+
 # User-specific files
 *.rsuser
 *.suo
