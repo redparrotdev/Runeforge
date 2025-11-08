@@ -65,6 +65,8 @@ public static class EventManager
 
     public static void Dispatch(BaseEvent eventInstance)
     {
+        if (eventInstance is null) return;
+
         _toDispatch.Add(eventInstance);
     }
 
