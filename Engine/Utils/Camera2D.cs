@@ -1,5 +1,6 @@
 ﻿using Engine.ViewportAdapters;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace Engine.Utils;
 
@@ -113,6 +114,23 @@ public class Camera2D
         var m = Matrix * _adapter.GetScaleMatrix();
 
         return Vector2.Transform(position, Matrix.Invert(m));
+    }
+
+    public Rectangle GetCameraVisibleArea()
+    {
+        var tl = Vector2.Transform(Vector2.Zero, Inverse);
+        var tr = Vector2.Transform(new Vector2(_adapter.VirtualWidth, 0f), Inverse);
+        var bl = Vector2.Transform(new Vector2(0f, _adapter.VirtualHeight), Inverse);
+        var br = Vector2.Transform(new Vector2(_adapter.VirtualWidth, _adapter.VirtualHeight), Inverse);
+
+        var minX = MathF.Min(tl.X, MathF.Min(tr.X, MathF.Min(bl.X, br.X)));
+        var minY = MathF.Min(tl.Y, MathF.Min(tr.Y, MathF.Min(bl.Y, br.Y)));
+        var maxX = MathF.Max(tl.X, MathF.Max(tr.X, MathF.Max(bl.X, br.X)));
+        var maxY = MathF.Max(tl.Y, MathF.Max(tr.Y, MathF.Max(bl.Y, br.Y)));
+
+        var visibleArea = new Rectangle((int)minX, (int)minY, (int)(maxX - minX), (int)(maxY - minY));
+
+        return visibleArea;
     }
 
     private void UpdateMatrices()
