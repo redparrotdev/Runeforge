@@ -1,4 +1,5 @@
-﻿using Engine.ECS;
+﻿using Engine.Debugging;
+using Engine.ECS;
 using Engine.Physics;
 using Microsoft.Xna.Framework;
 
@@ -8,6 +9,7 @@ public abstract class ColliderComponent : UpdateComponent
 {
     public Collider Collider { get; }
 
+    [DebugExpose]
     public Vector2 Position
     {
         get => Collider.Position;
