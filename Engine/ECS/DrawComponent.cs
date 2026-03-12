@@ -1,4 +1,5 @@
 ﻿using Engine.Abstractions;
+using Engine.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -8,6 +9,8 @@ namespace Engine.ECS;
 public abstract class DrawComponent : Component, IDraw
 {
     private bool _isVisible = true;
+
+    [DebugExpose("Is Visible")]
     public bool IsVisible
     {
         get => _isVisible;
@@ -21,6 +24,8 @@ public abstract class DrawComponent : Component, IDraw
     }
 
     private int _drawOrder = 0;
+
+    [DebugExpose("Draw order")]
     public int DrawOrder
     {
         get => _drawOrder;

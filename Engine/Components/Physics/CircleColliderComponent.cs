@@ -1,9 +1,11 @@
-﻿using Engine.Physics.Colliders;
+﻿using Engine.Debugging;
+using Engine.Physics.Colliders;
 
 namespace Engine.Components.Physics;
 
 public class CircleColliderComponent : ColliderComponent
 {
+    [DebugExpose]
     public float Radius
     {
         get => ((CircleCollider)Collider).Radius;
