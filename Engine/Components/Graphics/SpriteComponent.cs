@@ -36,10 +36,10 @@ public class SpriteComponent : DrawComponent
     public virtual Vector2 Position => Entity.Position;
 
     [DebugExpose]
-    public virtual float Width => Sprite.Texture.Width * Scale.X;
+    public virtual float Width => Sprite.Width * Scale.X;
 
     [DebugExpose]
-    public virtual float Height => Sprite.Texture.Height * Scale.Y;
+    public virtual float Height => Sprite.Height * Scale.Y;
 
     public SpriteComponent(Sprite sprite)
     {
