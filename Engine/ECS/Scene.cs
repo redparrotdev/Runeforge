@@ -40,7 +40,9 @@ public abstract class Scene : IDisposable
 
     public virtual void Draw(GameTime gameTime)
     {
+        SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
         Entities.Draw(SpriteBatch, gameTime);
+        SpriteBatch.End();
     }
 
     public void AddEntity(Entity entity)
