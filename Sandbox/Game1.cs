@@ -1,5 +1,6 @@
 ﻿using Engine.Debugging;
 using Engine.Debugging.Panels;
+using Engine.Events;
 using Engine.Inputs;
 using Engine.Utils;
 using Engine.ViewportAdapters;
@@ -8,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.ImGuiNet;
+using Sandbox.Debugging;
 using Sandbox.Scenes;
 
 namespace Sandbox;
@@ -20,6 +22,8 @@ public class Game1 : Game
     private DebugUI _debugUI;
     private ViewportAdapter _viewportAdapter;
     private SceneManager _sceneManager;
+
+    private EventManager.EventSubscription _debugChangeSceneEventSub;
 
     public Game1()
     {
@@ -45,8 +49,14 @@ public class Game1 : Game
         _sceneManager = new SceneManager();
         Services.AddService(_sceneManager);
 
-        var testScene = new SampleScene(this);
-        _sceneManager.SetScene(testScene);
+        var sceneSwitcher = new SceneSwitcherPanel();
+        sceneSwitcher.AddScene("Sample scene", () => new SampleScene(this));
+        _debugUI.AddPanel(sceneSwitcher);
+
+        _debugChangeSceneEventSub = EventManager.Subscribe<DebugChangeSceneEvent>(e =>
+        {
+            _sceneManager.SetScene(e.NewScene, e.SavePreviousSceneInNavigationStack);
+        });
 
         base.Initialize();
     }
@@ -58,12 +68,18 @@ public class Game1 : Game
         // TODO: use this.Content to load your game content here
     }
 
+    protected override void UnloadContent()
+    {
+        _debugChangeSceneEventSub.Unsubscribe();
+    }
+
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
         InputManager.Update();
+        EventManager.Update(gameTime);
 
         if (InputManager.Keyboard.KeyPressed(Keys.OemTilde))
         {
