@@ -49,6 +49,8 @@ public class SpriteAnimatorComponent : SpriteComponent
 
     public Dictionary<string, Animation> Animations { get; private set; }
 
+    public event Action<SpriteAnimatorComponent, string> OnAnimationCompleted;
+
     public SpriteAnimatorComponent() : this([])
     { }
 
@@ -111,6 +113,8 @@ public class SpriteAnimatorComponent : SpriteComponent
     {
         CurrentAnimationState = AnimationState.Completed;
         CurrentElapsedTime = 0f;
+
+        OnAnimationCompleted?.Invoke(this, CurrentAnimationName);
     }
 
     public override void Update(GameTime gameTime)
