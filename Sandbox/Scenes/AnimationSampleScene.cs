@@ -7,6 +7,7 @@ using Engine.Graphics.Extensions;
 using Engine.Inputs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Sandbox.Component;
 
 namespace Sandbox.Scenes;
 
@@ -44,8 +45,12 @@ internal sealed class AnimationSampleScene : Scene
     {
         if (InputManager.Keyboard.KeyPressed(Keys.Space))
         {
-            var mousePos = InputManager.Mouse.Position();
-            CreateExplosionEntity(mousePos);
+            var caster = FindEntityByName("Animated");
+            var animationComponent = caster?.GetComponent<SpriteAnimatorComponent>();
+            if (animationComponent?.CurrentAnimationName != "cast")
+            {
+                animationComponent.Play("cast", SpriteAnimatorComponent.LoopMode.OnceClamp);
+            }
         }
 
         base.Update(gameTime);
@@ -55,16 +60,28 @@ internal sealed class AnimationSampleScene : Scene
     {
         var atlas = Content.LoadTextureAtlasFromXml("AnimationSample/SampleSheet.xml");
         var idleAnimation = atlas.GetAnimation("idle-animation");
+        var castAnimation = atlas.GetAnimation("cast-animation");
         var spriteAnimator = new SpriteAnimatorComponent()
         {
             Scale = new Vector2(4f)
         };
         spriteAnimator.AddAnimation("idle", idleAnimation);
+        spriteAnimator.AddAnimation("cast", castAnimation);
 
         spriteAnimator.Play("idle");
 
+        spriteAnimator.OnAnimationCompleted += (c, _) => c.Play("idle");
+        spriteAnimator.OnAnimationCompleted += (c, name) =>
+        {
+            if (name != "cast") return;
+
+            var mousePos = InputManager.Mouse.Position();
+            CreateExplosionEntity(mousePos);
+        };
+
         var entity = new Entity("Animated", new Vector2(250f))
-            .AddComponent(spriteAnimator);
+            .AddComponent(spriteAnimator)
+            .AddComponent(new MovementComponent());
 
         AddEntity(entity);
     }

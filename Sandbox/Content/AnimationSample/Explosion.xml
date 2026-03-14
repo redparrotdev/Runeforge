@@ -18,7 +18,7 @@
     <Region name="frame-14" x="1664" y="0" width="128" height="96" originY="88" />
   </Regions>
   <Animations>
-    <Animation name="effect" frameTime="70">
+    <Animation name="effect" fps="30">
       <Frame region="frame-1" />
       <Frame region="frame-2" />
       <Frame region="frame-3" />
