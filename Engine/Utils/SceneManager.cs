@@ -12,6 +12,11 @@ public class SceneManager
 
     public void SetScene(Scene scene, bool savePreviousInNavigation = true)
     {
+        if (!savePreviousInNavigation && CurrentScene is { } current)
+        {
+            current.Unload();
+        }
+
         scene.Load();
 
         _navigationStack.Push(scene);
