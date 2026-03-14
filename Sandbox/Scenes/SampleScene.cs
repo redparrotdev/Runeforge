@@ -69,7 +69,7 @@ internal sealed class SampleScene : Scene
     public override void Draw(GameTime gameTime)
     {
         SpriteBatch.Begin(transformMatrix: _camera.Matrix);
-        base.Draw(gameTime);
+        Entities.Draw(SpriteBatch, gameTime);
         SpriteBatch.End();
     }
 }

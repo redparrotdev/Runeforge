@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas>
+  <Texture>AnimationSample/SampleSheet</Texture>
+  <Regions>
+    <Region name="sprite-idle-1" x="0" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-2" x="160" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-3" x="320" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-4" x="480" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-5" x="640" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-6" x="800" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-7" x="960" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-8" x="1120" y="0" width="160" height="128"/>
+  </Regions>
+  <Animations>
+    <Animation name="idle-animation" frameTime="125">
+      <Frame region="sprite-idle-1" />
+      <Frame region="sprite-idle-2" />
+      <Frame region="sprite-idle-3" />
+      <Frame region="sprite-idle-4" />
+      <Frame region="sprite-idle-5" />
+      <Frame region="sprite-idle-6" />
+      <Frame region="sprite-idle-7" />
+      <Frame region="sprite-idle-8" />
+    </Animation>
+  </Animations>
+</TextureAtlas>

@@ -51,6 +51,7 @@ public class Game1 : Game
 
         var sceneSwitcher = new SceneSwitcherPanel();
         sceneSwitcher.AddScene("Sample scene", () => new SampleScene(this));
+        sceneSwitcher.AddScene("Animation sample scene", () => new AnimationSampleScene(this));
         _debugUI.AddPanel(sceneSwitcher);
 
         _debugChangeSceneEventSub = EventManager.Subscribe<DebugChangeSceneEvent>(e =>
