@@ -83,8 +83,7 @@ public class SpriteAnimatorComponent : SpriteComponent
     {
         CurrentFrame = frame;
         FrameTimeLeft = FrameTime;
-        var region = CurrentAnimation.Frames[frame];
-        Sprite = new Sprite(region);
+        Sprite = CurrentAnimation.Frames[frame];
     }
 
     public void NextFrame()

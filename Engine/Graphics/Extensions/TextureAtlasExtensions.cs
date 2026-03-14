@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Engine.Graphics.Extensions;
 
 public static class TextureAtlasExtensions
 {
-    public static TextureAtlas LoadTextureAtlasFromXml(this ContentManager content, string file)
+    public static SpriteAtlas LoadTextureAtlasFromXml(this ContentManager content, string file)
     {
         var fullPath = Path.Combine(content.RootDirectory, file);
 
@@ -24,7 +25,7 @@ public static class TextureAtlasExtensions
         var texturePath = docRoot.Element("Texture").Value;
         var texture = content.Load<Texture2D>(texturePath);
 
-        var atlas = new TextureAtlas(texture);
+        var atlas = new SpriteAtlas(texture);
 
         var regions = (docRoot.Element("Regions")?.Elements("Region") ?? []).ToArray();
         
@@ -40,8 +41,13 @@ public static class TextureAtlasExtensions
             var y = int.Parse(node.Attribute("y")?.Value ?? "0");
             var w = int.Parse(node.Attribute("width")?.Value ?? "0");
             var h = int.Parse(node.Attribute("height")?.Value ?? "0");
+            var originX = float.Parse(node.Attribute("originX")?.Value ?? $"{w / 2f}");
+            var originY = float.Parse(node.Attribute("originY")?.Value ?? $"{h / 2f}");
 
-            atlas.AddRegion(name, new TextureRegion(texture, x, y, w, h));
+            var sourceRect = new Rectangle(x, y, w, h);
+            var origin = new Vector2(originX, originY);
+           
+            atlas.AddSprite(name, new Sprite(texture, sourceRect, origin));
         }
 
         var animations = (docRoot.Element("Animations")?.Elements("Animation") ?? []).ToArray();
@@ -53,13 +59,13 @@ public static class TextureAtlasExtensions
             if (string.IsNullOrWhiteSpace(name) || frames.Length == 0) continue;
 
             var frameTime = float.Parse(node.Attribute("frameTime").Value ?? "0");
-            var animationFrames = new List<TextureRegion>(frames.Length);
+            var animationFrames = new List<Sprite>(frames.Length);
             foreach (var frame in frames)
             {
                 var regionName = frame.Attribute("region")?.Value;
                 if (string.IsNullOrWhiteSpace(regionName)) continue;
 
-                var region = atlas.GetRegion(regionName);
+                var region = atlas.GetSprite(regionName);
                 animationFrames.Add(region);
             }
 

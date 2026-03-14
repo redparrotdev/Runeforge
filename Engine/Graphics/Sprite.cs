@@ -5,33 +5,20 @@ namespace Engine.Graphics;
 
 public class Sprite
 {
-    private readonly TextureRegion _textureRegion;
-    public virtual TextureRegion TextureRegion => _textureRegion; 
-
-    public Texture2D Texture => TextureRegion.Texture;
-    public Rectangle SourceRectangle => TextureRegion.SourceRectange;
-    public int Width => TextureRegion.Width;
-    public int Height => TextureRegion.Height;
+    public Texture2D Texture { get; init; }
+    public Rectangle SourceRectangle { get; init; }
+    public int Width => SourceRectangle.Width;
+    public int Height => SourceRectangle.Height;
     public readonly Vector2 Center;
 
     public Vector2 Origin { get; set; }
 
     public Sprite(Texture2D texture, Rectangle sourceRectangle, Vector2 origin)
     {
-        _textureRegion = new TextureRegion(texture, sourceRectangle);
+        Texture = texture;
+        SourceRectangle = sourceRectangle;
         Origin = origin;
         Center = SourceRectangle.Size.ToVector2() / 2f;
-    }
-
-    public Sprite(TextureRegion textureRegion, Vector2 origin)
-    {
-        _textureRegion = textureRegion;
-        Origin = origin;
-        Center = textureRegion.SourceRectange.Size.ToVector2() / 2f;
-    }
-
-    public Sprite(TextureRegion textureRegion) : this(textureRegion, textureRegion.SourceRectange.Size.ToVector2() / 2f)
-    {
     }
 
     public Sprite(Texture2D texture) : this(texture, texture.Bounds, texture.Bounds.Size.ToVector2() / 2f)
