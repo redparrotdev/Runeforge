@@ -22,7 +22,7 @@ public class SpriteAnimatorComponent : SpriteComponent
     }
 
     [DebugExpose]
-    public TimeSpan FrameTime { get; set; }
+    public float FrameTime { get; set; }
 
     public Animation CurrentAnimation { get; private set; }
 
@@ -65,7 +65,7 @@ public class SpriteAnimatorComponent : SpriteComponent
         CurrentLoopMode = loopMode;
         CurrentElapsedTime = 0f;
         FrameCount = CurrentAnimation.Frames.Count;
-        FrameTime = CurrentAnimation.FrameTime;
+        FrameTime = (float)CurrentAnimation.FrameTime.TotalSeconds;
 
         SetFrame(0);
     }
@@ -80,7 +80,7 @@ public class SpriteAnimatorComponent : SpriteComponent
     public void SetFrame(int frame)
     {
         CurrentFrame = frame;
-        FrameTimeLeft = (float)FrameTime.TotalSeconds;
+        FrameTimeLeft = FrameTime;
         var region = CurrentAnimation.Frames[frame];
         Sprite = new Sprite(region);
     }
