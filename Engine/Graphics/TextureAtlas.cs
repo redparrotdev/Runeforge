@@ -8,15 +8,19 @@ public sealed class TextureAtlas
 {
     public Texture2D Texture { get; init; }
 
-    private readonly Dictionary<string, TextureRegion> _regions;
+    public IReadOnlyDictionary<string, Animation> Animations => _animations;
 
-    public TextureAtlas(Texture2D texture, Dictionary<string, TextureRegion> regions)
+    private readonly Dictionary<string, TextureRegion> _regions;
+    private readonly Dictionary<string, Animation> _animations;
+
+    public TextureAtlas(Texture2D texture, Dictionary<string, TextureRegion> regions, Dictionary<string, Animation> animations)
     {
         Texture = texture;
         _regions = regions;
+        _animations = animations;
     }
 
-    public TextureAtlas(Texture2D texture) : this(texture, [])
+    public TextureAtlas(Texture2D texture) : this(texture, [], [])
     {
     }
 
@@ -32,7 +36,7 @@ public sealed class TextureAtlas
 
     public TextureRegion GetRegion(string name)
     {
-        return _regions.TryGetValue(name, out var region) ? region : null;
+        return _regions.GetValueOrDefault(name);
     }
 
     public void RemoveRegion(string name)
@@ -43,6 +47,26 @@ public sealed class TextureAtlas
     public void ClearRegions()
     {
         _regions.Clear();
+    }
+
+    public void AddAnimation(string name, Animation animation)
+    {
+        _animations.Add(name, animation);
+    }
+
+    public void RemoveAnimation(string name)
+    {
+        _animations.Remove(name);
+    }
+
+    public Animation GetAnimation(string name)
+    {
+        return _animations.GetValueOrDefault(name);
+    }
+
+    public void ClearAnimations()
+    {
+        _animations.Clear();
     }
 
     public Sprite CreateSprite(string name)

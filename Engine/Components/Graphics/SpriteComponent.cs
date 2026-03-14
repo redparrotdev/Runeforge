@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Engine.Components.Graphics;
 
-public class SpriteComponent : DrawComponent
+public class SpriteComponent : UpdateDrawComponent
 {
     public Sprite Sprite { get; set; }
 
@@ -44,6 +44,10 @@ public class SpriteComponent : DrawComponent
     public SpriteComponent(Sprite sprite)
     {
         Sprite = sprite;
+    }
+
+    public override void Update(GameTime gameTime)
+    {
     }
 
     public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
