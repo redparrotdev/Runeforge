@@ -7,15 +7,15 @@ namespace Engine.Graphics;
 public sealed class Animation
 {
     public IReadOnlyList<Sprite> Frames { get; init; }
-    public TimeSpan FrameTime { get; init; }
+    public float FrameRate { get; init; }
 
-    public Animation(IEnumerable<Sprite> frames, TimeSpan frameTime)
+    public Animation(IEnumerable<Sprite> frames, float frameTime)
     {
         Frames = [..frames];
-        FrameTime = frameTime;
+        FrameRate = frameTime;
     }
 
-    public Animation(IEnumerable<Sprite> frames) : this(frames, TimeSpan.FromSeconds(1) / frames.Count())
+    public Animation(IEnumerable<Sprite> frames) : this(frames, 60f)
     {
     }
 }

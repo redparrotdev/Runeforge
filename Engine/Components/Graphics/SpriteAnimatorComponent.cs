@@ -21,13 +21,13 @@ public class SpriteAnimatorComponent : SpriteComponent
         Completed
     }
 
-    [DebugExpose]
-    public float FrameTime { get; set; }
-
     public Animation CurrentAnimation { get; private set; }
 
     [DebugExpose]
     public string CurrentAnimationName { get; private set; }
+
+    [DebugExpose]
+    public float FrameRate => CurrentAnimation?.FrameRate ?? 0f;
 
     [DebugExpose]
     public LoopMode CurrentLoopMode { get; private set; }
@@ -43,6 +43,9 @@ public class SpriteAnimatorComponent : SpriteComponent
 
     [DebugExpose]
     public float CurrentElapsedTime { get; private set; }
+
+    [DebugExpose]
+    public float FrameTime { get; set; }
 
     [DebugExpose]
     public float FrameTimeLeft { get; private set; }
@@ -67,7 +70,7 @@ public class SpriteAnimatorComponent : SpriteComponent
         CurrentLoopMode = loopMode;
         CurrentElapsedTime = 0f;
         FrameCount = CurrentAnimation.Frames.Count;
-        FrameTime = (float)CurrentAnimation.FrameTime.TotalSeconds;
+        FrameTime = ConvertFrameRateToSeconds(CurrentAnimation.FrameRate);
 
         SetFrame(0);
     }
@@ -134,5 +137,10 @@ public class SpriteAnimatorComponent : SpriteComponent
     private bool ShouldPlayNextFrame()
     {
         return FrameTimeLeft <= 0f;
+    }
+
+    private static float ConvertFrameRateToSeconds(float frameRate)
+    {
+        return 1 / frameRate;
     }
 }

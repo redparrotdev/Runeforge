@@ -58,7 +58,7 @@ public static class TextureAtlasExtensions
 
             if (string.IsNullOrWhiteSpace(name) || frames.Length == 0) continue;
 
-            var frameTime = float.Parse(node.Attribute("frameTime").Value ?? "0");
+            var frameRate = float.Parse(node.Attribute("fps").Value ?? "0");
             var animationFrames = new List<Sprite>(frames.Length);
             foreach (var frame in frames)
             {
@@ -71,7 +71,7 @@ public static class TextureAtlasExtensions
 
             if (animationFrames.Count == 0) continue;
 
-            var animation = new Animation(animationFrames, TimeSpan.FromMilliseconds(frameTime));
+            var animation = new Animation(animationFrames, frameRate);
             atlas.AddAnimation(name, animation);
         }
 
