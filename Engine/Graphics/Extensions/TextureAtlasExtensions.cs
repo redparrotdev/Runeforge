@@ -27,7 +27,7 @@ public static class TextureAtlasExtensions
 
         var atlas = new SpriteAtlas(texture);
 
-        var regions = (docRoot.Element("Regions")?.Elements("Region") ?? []).ToArray();
+        var regions = (docRoot.Element("Sprites")?.Elements("Sprite") ?? []).ToArray();
         
         foreach (var node in regions)
         {
@@ -62,7 +62,7 @@ public static class TextureAtlasExtensions
             var animationFrames = new List<Sprite>(frames.Length);
             foreach (var frame in frames)
             {
-                var regionName = frame.Attribute("region")?.Value;
+                var regionName = frame.Attribute("sprite")?.Value;
                 if (string.IsNullOrWhiteSpace(regionName)) continue;
 
                 var region = atlas.GetSprite(regionName);
