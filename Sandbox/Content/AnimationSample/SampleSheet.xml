@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas>
+  <Texture>AnimationSample/SampleSheet</Texture>
+  <Regions>
+    <!--Idle-->
+    <Region name="sprite-idle-1" x="0" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-2" x="160" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-3" x="320" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-4" x="480" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-5" x="640" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-6" x="800" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-7" x="960" y="0" width="160" height="128"/>
+    <Region name="sprite-idle-8" x="1120" y="0" width="160" height="128"/>
+    <!--Cast-->
+    <Region name="sprite-cast-1" x="0" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-2" x="160" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-3" x="320" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-4" x="480" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-5" x="640" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-6" x="800" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-7" x="960" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-8" x="1120" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-9" x="1280" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-10" x="1440" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-11" x="1600" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-12" x="1760" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-13" x="1920" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-14" x="2080" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-15" x="2240" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-16" x="2400" y="512" width="160" height="128"/>
+    <Region name="sprite-cast-17" x="2560" y="512" width="160" height="128"/>
+  </Regions>
+  <Animations>
+    <Animation name="idle-animation" fps="25">
+      <Frame region="sprite-idle-1" />
+      <Frame region="sprite-idle-2" />
+      <Frame region="sprite-idle-3" />
+      <Frame region="sprite-idle-4" />
+      <Frame region="sprite-idle-5" />
+      <Frame region="sprite-idle-6" />
+      <Frame region="sprite-idle-7" />
+      <Frame region="sprite-idle-8" />
+    </Animation>
+    <Animation name="cast-animation" fps="30">
+      <Frame region="sprite-cast-1" />
+      <Frame region="sprite-cast-2" />
+      <Frame region="sprite-cast-3" />
+      <Frame region="sprite-cast-4" />
+      <Frame region="sprite-cast-5" />
+      <Frame region="sprite-cast-6" />
+      <Frame region="sprite-cast-7" />
+      <Frame region="sprite-cast-8" />
+      <Frame region="sprite-cast-9" />
+      <Frame region="sprite-cast-10" />
+      <Frame region="sprite-cast-11" />
+      <Frame region="sprite-cast-12" />
+      <Frame region="sprite-cast-13" />
+      <Frame region="sprite-cast-14" />
+      <Frame region="sprite-cast-15" />
+      <Frame region="sprite-cast-16" />
+      <Frame region="sprite-cast-17" />
+    </Animation>
+  </Animations>
+</TextureAtlas>

@@ -7,7 +7,7 @@ namespace Engine.ECS;
 
 public abstract class UpdateDrawComponent : Component, IUpdate, IDraw
 {
-    private bool _isActive = false;
+    private bool _isActive = true;
     public bool IsActive
     {
         get => _isActive;

@@ -5,8 +5,10 @@ namespace Engine.Graphics;
 
 public class Sprite
 {
-    public readonly Texture2D Texture;
-    public readonly Rectangle SourceRectangle;
+    public Texture2D Texture { get; init; }
+    public Rectangle SourceRectangle { get; init; }
+    public int Width => SourceRectangle.Width;
+    public int Height => SourceRectangle.Height;
     public readonly Vector2 Center;
 
     public Vector2 Origin { get; set; }

@@ -13,3 +13,33 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin AnimationSample/Explosion.xml
+/copy:AnimationSample/Explosion.xml
+
+#begin AnimationSample/Necromancer_creativekind-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:AnimationSample/Necromancer_creativekind-Sheet.png;AnimationSample/SampleSheet.png
+
+#begin AnimationSample/SampleSheet.xml
+/copy:AnimationSample/SampleSheet.xml
+
+#begin AnimationSample/spritesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:AnimationSample/spritesheet.png;AnimationSample/Explosion.png
+

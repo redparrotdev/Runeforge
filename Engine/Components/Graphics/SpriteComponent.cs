@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Engine.Components.Graphics;
 
-public class SpriteComponent : DrawComponent
+public class SpriteComponent : UpdateDrawComponent
 {
     public Sprite Sprite { get; set; }
 
@@ -36,14 +36,18 @@ public class SpriteComponent : DrawComponent
     public virtual Vector2 Position => Entity.Position;
 
     [DebugExpose]
-    public virtual float Width => Sprite.Texture.Width * Scale.X;
+    public virtual float Width => Sprite.Width * Scale.X;
 
     [DebugExpose]
-    public virtual float Height => Sprite.Texture.Height * Scale.Y;
+    public virtual float Height => Sprite.Height * Scale.Y;
 
     public SpriteComponent(Sprite sprite)
     {
         Sprite = sprite;
+    }
+
+    public override void Update(GameTime gameTime)
+    {
     }
 
     public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
