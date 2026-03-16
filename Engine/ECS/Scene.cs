@@ -10,11 +10,11 @@ public abstract class Scene : IDisposable
 {
     private bool _disposed;
 
-    protected readonly EntitiesList Entities;
-    protected readonly ContentManager Content;
-    protected readonly GraphicsDevice GraphicsDevice;
+    public readonly EntitiesList Entities;
+    public readonly ContentManager Content;
+    public readonly GraphicsDevice GraphicsDevice;
+    public readonly GameServiceContainer Services;
     protected readonly SpriteBatch SpriteBatch;
-    protected readonly GameServiceContainer Services;
 
     protected Scene(Game game)
     {
