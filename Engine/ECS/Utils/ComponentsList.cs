@@ -14,6 +14,11 @@ public class ComponentsList : IEnumerable<Component>
     public event Action<Component> ComponentAdded;
     public event Action<Component> ComponentRemoved;
 
+    public readonly BitArray Signature = ComponentType.IssueSignature();
+
+    public IReadOnlyList<Component> UpdatableComponents => [.._updatable.Cast<Component>()];
+    public IReadOnlyList<Component> DrawableComponents => [.._drawable.Cast<Component>()];
+
     private readonly Entity _entity;
 
     private readonly List<Component> _all = [];
@@ -71,6 +76,9 @@ public class ComponentsList : IEnumerable<Component>
     {
         Debug.Assert(component != null);
 
+        var componentTypeId = ComponentType.GetId(component.GetType());
+        Signature.Set(componentTypeId, true);
+
         if (_updating)
         {
             _toAdd.Add(component);
@@ -100,6 +108,10 @@ public class ComponentsList : IEnumerable<Component>
     {
         if (component is null) return;
 
+        // TODO: having multiple components of the same type will cause problems here, need to review it later
+        var componentTypeId = ComponentType.GetId(component.GetType());
+        Signature.Set(componentTypeId, false);
+
         if (_updating)
         {
             _toRemove.Add(component);
@@ -121,6 +133,13 @@ public class ComponentsList : IEnumerable<Component>
         }
 
         ComponentRemoved?.Invoke(component);
+    }
+
+    public bool Has<T>() where T : Component
+    {
+        var componentTypeId = ComponentType.GetId<T>();
+
+        return Signature.Get(componentTypeId);
     }
 
     public T Get<T>() where T : Component
