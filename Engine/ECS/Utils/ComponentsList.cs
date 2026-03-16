@@ -129,8 +129,8 @@ public class ComponentsList : IEnumerable<Component>
 
         return componentType switch
         {
-            IUpdate => _updatable.FirstOrDefault(c => c is T) as T,
-            IDraw => _drawable.FirstOrDefault(c => c is T) as T,
+            _ when componentType.IsAssignableTo(typeof(IUpdate)) => _updatable.FirstOrDefault(c => c is T) as T,
+            _ when componentType.IsAssignableTo(typeof(IDraw)) => _drawable.FirstOrDefault(c => c is T) as T,
             _ => _all.FirstOrDefault(c => c is T) as T,
         };
     }
@@ -141,8 +141,8 @@ public class ComponentsList : IEnumerable<Component>
 
         return componentType switch
         {
-            IUpdate => _updatable.OfType<T>(),
-            IDraw => _drawable.OfType<T>(),
+            _ when componentType.IsAssignableTo(typeof(IUpdate)) => _updatable.OfType<T>(),
+            _ when componentType.IsAssignableTo(typeof(IDraw)) => _drawable.OfType<T>(),
             _ => _all.OfType<T>()
         };
     }
