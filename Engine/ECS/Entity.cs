@@ -3,6 +3,7 @@ using Engine.ECS.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Engine.ECS;
@@ -12,6 +13,8 @@ public class Entity : IUpdate, IDraw
     public readonly string Name;
 
     public ComponentsList Components { get; private set; }
+    public BitArray ComponentsSignature => Components.Signature;
+
     public Scene Scene { get; private set; }
 
     private bool _isAlive = true;
@@ -135,6 +138,11 @@ public class Entity : IUpdate, IDraw
         Components.Remove(component);
 
         return this;
+    }
+
+    public bool HasComponent<T>() where T : Component
+    {
+        return Components.Has<T>();
     }
 
     public T GetComponent<T>() where T : Component
