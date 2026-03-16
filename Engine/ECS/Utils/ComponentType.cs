@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Engine.ECS.Utils;
 
@@ -30,6 +31,8 @@ public static class ComponentType
 
     public static int GetId(Type type)
     {
+        Debug.Assert(type.IsAssignableTo(typeof(Component)));
+
         if (!_typeIds.TryGetValue(type, out var id))
         {
             id = _nextTypeId++;
