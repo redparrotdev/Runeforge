@@ -1,4 +1,5 @@
-﻿using Engine.Debugging;
+﻿using Engine.Coroutines;
+using Engine.Debugging;
 using Engine.Debugging.Panels;
 using Engine.Events;
 using Engine.Inputs;
@@ -9,13 +10,17 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.ImGuiNet;
+using MonoGameGum;
 using Sandbox.Debugging;
 using Sandbox.Scenes;
+using Sandbox.Scenes.TurnBasedCombatSample;
 
 namespace Sandbox;
 
 public class Game1 : Game
 {
+    private static GumService _gumUI => GumService.Default;
+
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private bool _debugEnabled = false;
@@ -34,6 +39,8 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
+        _gumUI.Initialize(this, Gum.Forms.DefaultVisualsVersion.Newest);
+        
         // TODO: Add your initialization logic here
         _graphics.PreferredBackBufferWidth = 1280;
         _graphics.PreferredBackBufferHeight = 720;
@@ -52,6 +59,7 @@ public class Game1 : Game
         var sceneSwitcher = new SceneSwitcherPanel();
         sceneSwitcher.AddScene("Sample scene", () => new SampleScene(this));
         sceneSwitcher.AddScene("Animation sample scene", () => new AnimationSampleScene(this));
+        sceneSwitcher.AddScene("Turn-based combat scene", () => new TurnBasedCombatScene(this));
         _debugUI.AddPanel(sceneSwitcher);
 
         _debugChangeSceneEventSub = EventManager.Subscribe<DebugChangeSceneEvent>(e =>
@@ -78,7 +86,8 @@ public class Game1 : Game
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-
+        _gumUI.Update(gameTime);
+        CoroutineManager.Update(gameTime);
         InputManager.Update();
         EventManager.Update(gameTime);
 
@@ -102,6 +111,7 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
         _sceneManager.Draw(gameTime);
+        _gumUI.Draw();
 
         if (_debugEnabled)
         {

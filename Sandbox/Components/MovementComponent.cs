@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
-namespace Sandbox.Component;
+namespace Sandbox.Components;
 
 internal class MovementComponent : UpdateComponent
 {
