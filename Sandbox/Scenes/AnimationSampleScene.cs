@@ -7,7 +7,7 @@ using Engine.Graphics.Extensions;
 using Engine.Inputs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Sandbox.Component;
+using Sandbox.Components;
 
 namespace Sandbox.Scenes;
 

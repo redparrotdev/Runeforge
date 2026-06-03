@@ -3,35 +3,41 @@
   <Texture>AnimationSample/SampleSheet</Texture>
   <Sprites>
     <!--Idle-->
-    <Sprite name="sprite-idle-1" x="0" y="0" width="160" height="128"/>
-    <Sprite name="sprite-idle-2" x="160" y="0" width="160" height="128"/>
-    <Sprite name="sprite-idle-3" x="320" y="0" width="160" height="128"/>
-    <Sprite name="sprite-idle-4" x="480" y="0" width="160" height="128"/>
-    <Sprite name="sprite-idle-5" x="640" y="0" width="160" height="128"/>
-    <Sprite name="sprite-idle-6" x="800" y="0" width="160" height="128"/>
-    <Sprite name="sprite-idle-7" x="960" y="0" width="160" height="128"/>
-    <Sprite name="sprite-idle-8" x="1120" y="0" width="160" height="128"/>
+    <Sprite name="sprite-idle-1" x="0" y="0" width="160" height="128" />
+    <Sprite name="sprite-idle-2" x="160" y="0" width="160" height="128" />
+    <Sprite name="sprite-idle-3" x="320" y="0" width="160" height="128" />
+    <Sprite name="sprite-idle-4" x="480" y="0" width="160" height="128" />
+    <Sprite name="sprite-idle-5" x="640" y="0" width="160" height="128" />
+    <Sprite name="sprite-idle-6" x="800" y="0" width="160" height="128" />
+    <Sprite name="sprite-idle-7" x="960" y="0" width="160" height="128" />
+    <Sprite name="sprite-idle-8" x="1120" y="0" width="160" height="128" />
     <!--Cast-->
-    <Sprite name="sprite-cast-1" x="0" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-2" x="160" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-3" x="320" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-4" x="480" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-5" x="640" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-6" x="800" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-7" x="960" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-8" x="1120" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-9" x="1280" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-10" x="1440" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-11" x="1600" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-12" x="1760" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-13" x="1920" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-14" x="2080" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-15" x="2240" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-16" x="2400" y="512" width="160" height="128"/>
-    <Sprite name="sprite-cast-17" x="2560" y="512" width="160" height="128"/>
+    <Sprite name="sprite-cast-1" x="0" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-2" x="160" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-3" x="320" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-4" x="480" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-5" x="640" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-6" x="800" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-7" x="960" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-8" x="1120" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-9" x="1280" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-10" x="1440" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-11" x="1600" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-12" x="1760" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-13" x="1920" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-14" x="2080" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-15" x="2240" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-16" x="2400" y="512" width="160" height="128" />
+    <Sprite name="sprite-cast-17" x="2560" y="512" width="160" height="128" />
+    <!--sprite-hurt-->
+    <Sprite name="sprite-hurt-1" x="0" y="640" width="160" height="128" />
+    <Sprite name="sprite-hurt-2" x="160" y="640" width="160" height="128" />
+    <Sprite name="sprite-hurt-3" x="320" y="640" width="160" height="128" />
+    <Sprite name="sprite-hurt-4" x="480" y="640" width="160" height="128" />
+    <Sprite name="sprite-hurt-5" x="640" y="640" width="160" height="128" />
   </Sprites>
   <Animations>
-    <Animation name="idle-animation" fps="25">
+    <Animation name="idle-animation" fps="20">
       <Frame sprite="sprite-idle-1" />
       <Frame sprite="sprite-idle-2" />
       <Frame sprite="sprite-idle-3" />
@@ -41,7 +47,7 @@
       <Frame sprite="sprite-idle-7" />
       <Frame sprite="sprite-idle-8" />
     </Animation>
-    <Animation name="cast-animation" fps="30">
+    <Animation name="cast-animation" fps="25">
       <Frame sprite="sprite-cast-1" />
       <Frame sprite="sprite-cast-2" />
       <Frame sprite="sprite-cast-3" />
@@ -59,6 +65,13 @@
       <Frame sprite="sprite-cast-15" />
       <Frame sprite="sprite-cast-16" />
       <Frame sprite="sprite-cast-17" />
+    </Animation>
+    <Animation name="hurt-animation" fps="20">
+      <Frame sprite="sprite-hurt-1" />
+      <Frame sprite="sprite-hurt-2" />
+      <Frame sprite="sprite-hurt-3" />
+      <Frame sprite="sprite-hurt-4" />
+      <Frame sprite="sprite-hurt-5" />
     </Animation>
   </Animations>
 </TextureAtlas>
