@@ -97,7 +97,7 @@ internal sealed class GenerateAnimationCommand : Command
             , new XAttribute(Constants.ANIMATION_ATTRIBUTE_NAME, animationName)
             , new XAttribute(Constants.ANIMATION_ATTRIBUTE_FPS, frameRate));
 
-        for (int i = 0; i <= countFrames; i++)
+        for (int i = 1; i <= countFrames; i++)
         {
             var spriteName = string.Format(format, prefix, i);
             var frameNode = new XElement(Constants.FRAME_ELEMENT_NAME
