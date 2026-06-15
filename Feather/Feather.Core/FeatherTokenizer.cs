@@ -1,5 +1,6 @@
 ﻿using Feather.Core.Structure;
 using Superpower;
+using Superpower.Model;
 using Superpower.Parsers;
 using Superpower.Tokenizers;
 
@@ -7,38 +8,144 @@ namespace Feather.Core;
 
 public static class FeatherTokenizer
 {
-    private static readonly Tokenizer<FeatherTokenType> _tokenizer = new TokenizerBuilder<FeatherTokenType>()
-        .Ignore(Span.WhiteSpace)
-        .Ignore(Comment.CPlusPlusStyle)
-        // Single character tokens
-        .Match(Span.EqualTo('='), FeatherTokenType.Assign)
-        .Match(Span.EqualTo('#'), FeatherTokenType.Hash)
-        .Match(Span.EqualTo('.'), FeatherTokenType.Dot)
-        .Match(Span.EqualTo('@'), FeatherTokenType.AtSign)
-        .Match(Span.EqualTo('{'), FeatherTokenType.OpenBrace)
-        .Match(Span.EqualTo('}'), FeatherTokenType.CloseBrace)
-        .Match(Span.EqualTo('<'), FeatherTokenType.Less)
-        .Match(Span.EqualTo('>'), FeatherTokenType.Greater)
-        // Keywords
-        .Match(Span.EqualTo("true"), FeatherTokenType.True)
-        .Match(Span.EqualTo("false"), FeatherTokenType.False)
-        .Match(Span.EqualTo("var"), FeatherTokenType.Var)
-        .Match(Span.EqualTo("set"), FeatherTokenType.Set)
-        .Match(Span.EqualTo("goto"), FeatherTokenType.Goto)
-        .Match(Span.EqualTo("call"), FeatherTokenType.Call)
-        .Match(Span.EqualTo("if"), FeatherTokenType.If)
-        .Match(Span.EqualTo("else"), FeatherTokenType.Else)
-        .Match(Span.EqualTo("and"), FeatherTokenType.And)
-        .Match(Span.EqualTo("or"), FeatherTokenType.Or)
-        .Match(Span.EqualTo("not"), FeatherTokenType.Not)
-        .Match(Span.EqualTo("null"), FeatherTokenType.Null)
-        .Match(Span.EqualTo("START"), FeatherTokenType.Start)
-        .Match(Span.EqualTo("END"), FeatherTokenType.End)
-        // Literals
-        .Match(Identifier.CStyle, FeatherTokenType.Identifier)
-        .Match(Numerics.Decimal, FeatherTokenType.Number)
-        .Match(QuotedString.CStyle, FeatherTokenType.String)
-        .Build();
+    public static readonly Tokenizer<FeatherTokenType> Instance = new TokenizerImpl();
 
-    public static readonly Tokenizer<FeatherTokenType> Instance = _tokenizer;
+    private sealed class TokenizerImpl : Tokenizer<FeatherTokenType>
+    {
+        private static readonly Dictionary<string, FeatherTokenType> _keywords = new(StringComparer.Ordinal)
+        {
+            { "true", FeatherTokenType.True },
+            { "false", FeatherTokenType.False },
+            { "var", FeatherTokenType.Var },
+            { "set", FeatherTokenType.Set },
+            { "goto", FeatherTokenType.Goto },
+            { "call", FeatherTokenType.Call },
+            { "if", FeatherTokenType.If },
+            { "else", FeatherTokenType.Else },
+            { "and", FeatherTokenType.And },
+            { "or", FeatherTokenType.Or },
+            { "not", FeatherTokenType.Not },
+            { "null", FeatherTokenType.Null },
+            { "START", FeatherTokenType.Start },
+            { "END", FeatherTokenType.End }
+        };
+
+        private static readonly Dictionary<char, FeatherTokenType> _singleCharTokens = new()
+        {
+            { '=', FeatherTokenType.Assign },
+            { '#', FeatherTokenType.Hash },
+            { '.', FeatherTokenType.Dot },
+            { '@', FeatherTokenType.AtSign },
+            { '{', FeatherTokenType.OpenBrace },
+            { '}', FeatherTokenType.CloseBrace },
+            { '<', FeatherTokenType.Less },
+            { '>', FeatherTokenType.Greater },
+            { '*', FeatherTokenType.Star }
+        };
+
+        protected override IEnumerable<Result<FeatherTokenType>> Tokenize(TextSpan span)
+        {
+            var next = span;
+
+            while (!next.IsAtEnd)
+            {
+                if (IsWhitespace(next, ref next))
+                {
+                    continue;
+                }
+
+                if (IsComment(next, ref next))
+                {
+                    continue;
+                }
+
+                var ch = Character.AnyChar(next);
+                if (!ch.HasValue)
+                {
+                    yield break;
+                }
+
+                if (IsSignleCharToken(ch.Value, out var charTokenType))
+                {
+                    yield return Result.Value(charTokenType, next, ch.Remainder);
+                    next = ch.Remainder;
+                    continue;
+                }
+
+                var identifier = Identifier.CStyle(next);
+                if (IsIdentifierOrKeyword(identifier, out var idTokenType))
+                {
+                    yield return Result.Value(idTokenType, next, identifier.Remainder);
+                    next = identifier.Remainder;
+                    continue;
+                }
+
+                var number = Numerics.Decimal(next);
+                if (number.HasValue)
+                {
+                    yield return Result.Value(FeatherTokenType.Number, next, number.Remainder);
+                    next = number.Remainder;
+                    continue;
+                }
+
+                var str = QuotedString.CStyle(next);
+                if (str.HasValue)
+                {
+                    yield return Result.Value(FeatherTokenType.String, next, str.Remainder);
+                    next = str.Remainder;
+                    continue;
+                }
+
+                yield return Result.Empty<FeatherTokenType>(next, $"Unexpected character '{ch.Value}'");
+                yield break;
+            }
+        }
+
+        private static bool IsWhitespace(TextSpan span, ref TextSpan next)
+        {
+            var ws = Span.WhiteSpace(span);
+            if (ws.HasValue)
+            {
+                next = ws.Remainder;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsComment(TextSpan span, ref TextSpan next)
+        {
+            var comment = Comment.CPlusPlusStyle(span);
+            if (comment.HasValue)
+            {
+                next = comment.Remainder;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsSignleCharToken(char ch, out FeatherTokenType tokenType)
+        {
+            if (_singleCharTokens.TryGetValue(ch, out tokenType))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsIdentifierOrKeyword(Result<TextSpan> identifier, out FeatherTokenType tokenType)
+        {
+            tokenType = default;
+            if (!identifier.HasValue)
+            {
+                return false;
+            }
+
+            tokenType = _keywords.TryGetValue(identifier.Value.ToStringValue(), out tokenType) ? tokenType : FeatherTokenType.Identifier;
+
+            return true;
+        }
+    }
 }
