@@ -105,11 +105,11 @@ public static class FeatherParser
     public static readonly TokenListParser<FeatherTokenType, FeatherStatement> SetStatement
         = Token
             .EqualTo(FeatherTokenType.Set)
-            .Then(_ => IdentifierExpression)
+            .Then(_ => Identifier)
             .Then(name => Token
                 .EqualTo(FeatherTokenType.Assign)
                 .Then(_ => Expression)
-                .Select(expr => (FeatherStatement)new FeatherStatement.SetVariableStatement((FeatherExpression.IdentifierExpressing)name, expr)));
+                .Select(expr => (FeatherStatement)new FeatherStatement.SetVariableStatement(name, expr)));
 
     public static readonly TokenListParser<FeatherTokenType, FeatherStatement> CallStatement
         = Token

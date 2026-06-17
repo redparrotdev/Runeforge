@@ -8,6 +8,5 @@ public abstract record FeatherExpression
     public record NullExpression() : FeatherExpression;
     public record IdentifierExpressing(string Name) : FeatherExpression;
     public record LabelIdentifierExpression(string Label) : FeatherExpression;
-    public record ContextExpression(string Type, string Key) : FeatherExpression;
     public record CharacterNameExpression(FeatherExpression Value) : FeatherExpression;
 }
