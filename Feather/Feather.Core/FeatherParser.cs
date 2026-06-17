@@ -105,11 +105,11 @@ public static class FeatherParser
     public static readonly TokenListParser<FeatherTokenType, FeatherStatement> SetStatement
         = Token
             .EqualTo(FeatherTokenType.Set)
-            .Then(_ => Identifier)
+            .Then(_ => IdentifierExpression)
             .Then(name => Token
                 .EqualTo(FeatherTokenType.Assign)
                 .Then(_ => Expression)
-                .Select(expr => (FeatherStatement)new FeatherStatement.VariableDeclarationStatement(name, expr)));
+                .Select(expr => (FeatherStatement)new FeatherStatement.SetVariableStatement((FeatherExpression.IdentifierExpressing)name, expr)));
 
     public static readonly TokenListParser<FeatherTokenType, FeatherStatement> CallStatement
         = Token
@@ -122,7 +122,7 @@ public static class FeatherParser
     public static readonly TokenListParser<FeatherTokenType, FeatherStatement> DialogLineStatement
         = CharacterNameExpression
             .Then(character => StringLiteral
-                .Select(text => (FeatherStatement)new FeatherStatement.DialogLineStatement((FeatherExpression.CharacterNameExpression)character, text)));
+                .Select(text => (FeatherStatement)new FeatherStatement.DialogLineStatement((FeatherExpression.CharacterNameExpression)character, text.Trim('"'))));
 
     public static readonly TokenListParser<FeatherTokenType, FeatherStatement> ChoiceBlockStatement
         = SetStatement
@@ -154,8 +154,7 @@ public static class FeatherParser
         = LabelIdentifier
             .Then(label => Token
                 .EqualTo(FeatherTokenType.OpenBrace)
-                .Then(_ => LabelBlockStatement)
-                .Many()
+                .Then(_ => LabelBlockStatement.Many())
                 .Then(statements => 
                     ChoiceStatement
                     .Many()
@@ -165,4 +164,23 @@ public static class FeatherParser
                             ((FeatherExpression.LabelIdentifierExpression)label).Label
                             , new FeatherStatement.BlockStatement(statements)
                             , choices.Cast<FeatherStatement.ChoiceStatement>())))));
+
+    public static readonly TokenListParser<FeatherTokenType, FeatherStatement> TopLevelStatement
+        = VarStatement
+            .Or(CallStatement)
+            .Or(SetStatement)
+            .Or(LabelDeclaration);
+
+    public static readonly TokenListParser<FeatherTokenType, FeatherScript> ScriptParser
+        = StartStatement!
+            .OptionalOrDefault()
+            .Then(start => TopLevelStatement
+                .AtLeastOnce()
+                .Select(statements =>
+                {
+                    // Ensure at least one label declaration exists
+                    if (!statements.Any(s => s is FeatherStatement.LabelDeclarationStatement))
+                        throw new ParseException("At least one label declaration is required");
+                    return new FeatherScript((FeatherStatement.StartStatement?)start, statements);
+                }));
 }
