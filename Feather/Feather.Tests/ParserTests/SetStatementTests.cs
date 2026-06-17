@@ -15,7 +15,7 @@ public sealed class SetStatementTests
         var result = FeatherParser.SetStatement.Parse(tokens);
 
         var setStmt = Assert.IsType<FeatherStatement.SetVariableStatement>(result);
-        var identifier = Assert.IsType<FeatherExpression.IdentifierExpressing>(setStmt.Variable);
-        Assert.Equal("gold", identifier.Name);
+        Assert.Equal("gold", setStmt.Variable);
+        Assert.IsType<FeatherExpression.NumberExpressing>(setStmt.Value);
     }
 }

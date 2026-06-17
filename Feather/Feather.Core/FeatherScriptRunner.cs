@@ -30,10 +30,9 @@ public sealed class FeatherScriptRunner
         _isFinished = false;
         InitializeCollections();
         InitializeTopLevelStatements();
-
-        if (string.IsNullOrWhiteSpace(_currentLabel))
+        if (_script.StartLabel is { } startLabel)
         {
-            _currentLabel = _labelsMap.First().Key;
+            _currentLabel = startLabel.Label.Label;
         }
 
         JumpToLabel(_currentLabel);
@@ -62,12 +61,19 @@ public sealed class FeatherScriptRunner
         {
             if (stmt is FeatherStatement.LabelDeclarationStatement labelDecl)
             {
+                if (string.IsNullOrWhiteSpace(_currentLabel))
+                {
+                    _currentLabel = labelDecl.Label;
+                }
+
                 _labelsMap[labelDecl.Label] = labelDecl;
                 continue;
             }
 
             _topLevelStatements.Add(stmt);
         }
+
+
     }
 
     private void InitializeTopLevelStatements()
@@ -98,7 +104,7 @@ public sealed class FeatherScriptRunner
             var stmt = block.Current;
             EvaluateStatement(stmt);
 
-            if (stmt is FeatherStatement.LabelDeclarationStatement)
+            if (stmt is FeatherStatement.DialogLineStatement)
             {
                 return true;
             }
@@ -119,9 +125,6 @@ public sealed class FeatherScriptRunner
                 break;
             case FeatherStatement.SetVariableStatement setVar:
                 EvaluateSetVariableStatement(setVar);
-                break;
-            case FeatherStatement.StartStatement startStmt:
-                EvaluateStartStatement(startStmt);
                 break;
             case FeatherStatement.EndStatement:
                 _isFinished = true;
@@ -193,17 +196,5 @@ public sealed class FeatherScriptRunner
 
         var newValue = EvaluateExpression(stmt.Value);
         _scriptVariables[stmt.Variable] = newValue;
-    }
-
-    private void EvaluateStartStatement(FeatherStatement.StartStatement stmt)
-    {
-        var labelName = EvaluateExpression(stmt.Label) switch
-        {
-            StrongBox<string> str => str.Value!,
-            // TODO: Make own exception type
-            _ => throw new InvalidOperationException($"Unsupported label expression type: {stmt.Label.GetType().FullName}")
-        };
-
-        _currentLabel = labelName;
     }
 }

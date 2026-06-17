@@ -175,7 +175,7 @@ public static class FeatherParser
         = StartStatement!
             .OptionalOrDefault()
             .Then(start => TopLevelStatement
-                .AtLeastOnce()
+                .Many()
                 .Select(statements =>
                 {
                     // Ensure at least one label declaration exists
@@ -183,4 +183,12 @@ public static class FeatherParser
                         throw new ParseException("At least one label declaration is required");
                     return new FeatherScript((FeatherStatement.StartStatement?)start, statements);
                 }));
+
+    public static FeatherScript ParseScript(string input)
+    {
+        var tokens = FeatherTokenizer.Instance.Tokenize(input);
+        var result = ScriptParser.Parse(tokens);
+
+        return result;
+    }
 }
