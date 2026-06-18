@@ -1,4 +1,5 @@
-﻿using Feather.Core.Models;
+﻿using Feather.Core.Helpers;
+using Feather.Core.Models;
 using Feather.Core.Structure;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -14,10 +15,12 @@ public sealed class FeatherScriptRunner
     private Dictionary<string, FeatherStatement.LabelDeclarationStatement> _labelsMap = [];
     private string _currentLabel = string.Empty;
 
-    private IEnumerator<FeatherStatement>? _currentBlockStatementsEnumerator = null;
+    private LookaheadEnumerator<FeatherStatement>? _currentBlockStatementsEnumerator = null;
     private IEnumerable<FeatherStatement.ChoiceStatement> _currentBlockChoices = [];
+    private readonly Dictionary<DialogLine.Choice, FeatherStatement.BlockStatement?> _currentLineChoicesBlocksMap = [];
 
     private bool _isFinished = false;
+    private bool _waitingForChoiceSelection = false;
 
     public DialogLine? CurrentLine { get; private set; } = null;
 
@@ -26,8 +29,11 @@ public sealed class FeatherScriptRunner
         Debug.Assert(script != null);
         ArgumentNullException.ThrowIfNull(script);
         _script = script;
+        _scriptVariables.Clear();
         CurrentLine = null;
         _isFinished = false;
+        _waitingForChoiceSelection = false;
+        _currentLineChoicesBlocksMap.Clear();
         InitializeCollections();
         InitializeTopLevelStatements();
         if (_script.StartLabel is { } startLabel)
@@ -38,18 +44,35 @@ public sealed class FeatherScriptRunner
         JumpToLabel(_currentLabel);
     }
 
-    public bool NextDialogLine()
+    public bool NextDialogLine(DialogLine.Choice? selectedChoice = null)
     {
         if (_isFinished) return false;
+
+        if (selectedChoice is not null && _waitingForChoiceSelection)
+        {
+            RunChoiceBlock(selectedChoice);
+        }
+
+        if (_waitingForChoiceSelection) return false;
         if (_currentBlockStatementsEnumerator is null) return false;
 
-        var canContinue = RunBlock(_currentBlockStatementsEnumerator);
+        var canContinue = RunLabelBlock();
 
+        // In case we reached END statement
+        if (_isFinished) return false;
         if (canContinue) return true;
 
-        // TODO: Handle choices
+        var choicesCount = _currentBlockChoices.TryGetNonEnumeratedCount(out var count) ? count : _currentBlockChoices.Count();
+        if (choicesCount == 0)
+        {
+            // No choices and block end reached means we are finished the script
+            _isFinished = true;
+            return true;
+        }
 
-        return false;
+        SetChoices();
+        _waitingForChoiceSelection = true;
+        return true;
     }
 
     private void InitializeCollections()
@@ -72,8 +95,6 @@ public sealed class FeatherScriptRunner
 
             _topLevelStatements.Add(stmt);
         }
-
-
     }
 
     private void InitializeTopLevelStatements()
@@ -93,24 +114,78 @@ public sealed class FeatherScriptRunner
         }
 
         _currentLabel = label;
-        _currentBlockStatementsEnumerator = labelDecl.Block.Statements.GetEnumerator();
+        _currentBlockStatementsEnumerator = new LookaheadEnumerator<FeatherStatement>(labelDecl.Block.Statements);
         _currentBlockChoices = labelDecl.Choices;
     }
 
-    private bool RunBlock(IEnumerator<FeatherStatement> block)
+    private bool RunLabelBlock()
     {
-        while(block.MoveNext())
+        if (_currentBlockStatementsEnumerator is null) return false;
+
+        while(_currentBlockStatementsEnumerator.MoveNext())
         {
-            var stmt = block.Current;
+            var stmt = _currentBlockStatementsEnumerator.Current;
             EvaluateStatement(stmt);
 
             if (stmt is FeatherStatement.DialogLineStatement)
             {
+                if (!_currentBlockStatementsEnumerator.HasNext) return false;
+
                 return true;
             }
+
+            // End statement reached
+            if (_isFinished) return false;
         }
 
         return false;
+    }
+
+    private void RunChoiceBlock(DialogLine.Choice choice)
+    {
+        _waitingForChoiceSelection = false;
+
+        if (!_currentLineChoicesBlocksMap.TryGetValue(choice, out var choiceBlock))
+        {
+            return;
+        }
+
+        if (choiceBlock is null || !choiceBlock.Statements.Any())
+        {
+            _isFinished = true;
+            return;
+        }
+
+        var blockEnumerator = choiceBlock.Statements.GetEnumerator();
+
+        while (blockEnumerator.MoveNext())
+        {
+            var stmt = blockEnumerator.Current;
+            EvaluateStatement(stmt);
+
+            if (_isFinished) return;
+            if (stmt is FeatherStatement.GotoStatement)
+            {
+                return;
+            }
+        }
+
+        _isFinished = true;
+    }
+
+    private void SetChoices()
+    {
+        Debug.Assert(CurrentLine != null);
+
+        _currentLineChoicesBlocksMap.Clear();
+        foreach (var choiceStmt in _currentBlockChoices)
+        {
+            var choiceText = choiceStmt.Text;
+            var choice = new DialogLine.Choice(choiceText);
+
+            CurrentLine.Choices.Add(choice);
+            _currentLineChoicesBlocksMap[choice] = choiceStmt.Block;
+        }
     }
 
     private void EvaluateStatement(FeatherStatement stmt)
@@ -125,6 +200,9 @@ public sealed class FeatherScriptRunner
                 break;
             case FeatherStatement.SetVariableStatement setVar:
                 EvaluateSetVariableStatement(setVar);
+                break;
+            case FeatherStatement.GotoStatement gotoStatement:
+                EvaluateGotoStatement(gotoStatement);
                 break;
             case FeatherStatement.EndStatement:
                 _isFinished = true;
@@ -196,5 +274,16 @@ public sealed class FeatherScriptRunner
 
         var newValue = EvaluateExpression(stmt.Value);
         _scriptVariables[stmt.Variable] = newValue;
+    }
+
+    private void EvaluateGotoStatement(FeatherStatement.GotoStatement stmt)
+    {
+        var label = EvaluateExpression(stmt.Label) switch
+        {
+            StrongBox<string> str => str.Value!,
+            _ => throw new InvalidOperationException($"Unsupported label expression type: {stmt.Label.GetType().FullName}")
+        };
+
+        JumpToLabel(label);
     }
 }
