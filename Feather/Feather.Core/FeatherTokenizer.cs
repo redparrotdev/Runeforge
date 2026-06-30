@@ -40,7 +40,12 @@ public static class FeatherTokenizer
             { '}', FeatherTokenType.CloseBrace },
             { '<', FeatherTokenType.Less },
             { '>', FeatherTokenType.Greater },
-            { '*', FeatherTokenType.Star }
+            { '*', FeatherTokenType.Star },
+            { '+', FeatherTokenType.Plus },
+            { '-', FeatherTokenType.Minus },
+            { '/', FeatherTokenType.Slash },
+            { '(', FeatherTokenType.OpenParen },
+            { ')', FeatherTokenType.CloseParen }
         };
 
         protected override IEnumerable<Result<FeatherTokenType>> Tokenize(TextSpan span)

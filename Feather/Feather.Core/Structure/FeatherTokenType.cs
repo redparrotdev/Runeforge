@@ -34,4 +34,9 @@ public enum FeatherTokenType
     CloseBrace, // }
     Less, // <
     Greater, // >
+    Plus, // +
+    Minus, // -
+    Slash, // /
+    OpenParen, // (
+    CloseParen, // )
 }

@@ -49,10 +49,6 @@ public static class FeatherParser
             .Then(_ => Identifier)
             .Select(label => (FeatherExpression)new FeatherExpression.LabelIdentifierExpression(label));
 
-    public static readonly TokenListParser<FeatherTokenType, FeatherExpression> Expression
-        = LiteralExpression
-            .Or(IdentifierExpression);
-
     public static readonly TokenListParser<FeatherTokenType, FeatherExpression> CharacterNameExpression
        = Token
            .EqualTo(FeatherTokenType.Less)
@@ -70,6 +66,37 @@ public static class FeatherParser
            .Then(finalExpr => Token
                .EqualTo(FeatherTokenType.Greater)
                .Select(_ => (FeatherExpression)new FeatherExpression.CharacterNameExpression(finalExpr)));
+
+    public static readonly TokenListParser<FeatherTokenType, FeatherExpression> Parenthesized
+        = Token.EqualTo(FeatherTokenType.OpenParen)
+            .IgnoreThen(Parse.Ref(() => Expression!))
+            .Then(expr => Token.EqualTo(FeatherTokenType.CloseParen).Value(expr));
+
+    public static readonly TokenListParser<FeatherTokenType, FeatherExpression> PrimaryExpression
+        = Parenthesized
+            .Or(LiteralExpression)
+            .Or(IdentifierExpression);
+
+    public static readonly TokenListParser<FeatherTokenType, BinaryOperatorType> MultiplicativeOperator
+        = Token.EqualTo(FeatherTokenType.Star)
+            .Value(BinaryOperatorType.Multiply)
+            .Or(Token.EqualTo(FeatherTokenType.Slash)
+                .Value(BinaryOperatorType.Divide));
+
+    public static readonly TokenListParser<FeatherTokenType, BinaryOperatorType> AdditiveOperator
+        = Token.EqualTo(FeatherTokenType.Plus)
+            .Value(BinaryOperatorType.Plus)
+            .Or(Token.EqualTo(FeatherTokenType.Minus)
+                .Value(BinaryOperatorType.Minus));
+
+    public static readonly TokenListParser<FeatherTokenType, FeatherExpression> MultiplicativeExpression
+        = Binary(PrimaryExpression, MultiplicativeOperator);
+
+    public static readonly TokenListParser<FeatherTokenType, FeatherExpression> AdditiveExpression
+        = Binary(MultiplicativeExpression, AdditiveOperator);
+
+    public static readonly TokenListParser<FeatherTokenType, FeatherExpression> Expression
+        = AdditiveExpression;
 
     // Statements
     public static readonly TokenListParser<FeatherTokenType, FeatherStatement> StartStatement
@@ -190,5 +217,25 @@ public static class FeatherParser
         var result = ScriptParser.Parse(tokens);
 
         return result;
+    }
+
+    private static TokenListParser<FeatherTokenType, FeatherExpression> Binary(
+        TokenListParser<FeatherTokenType, FeatherExpression> operand
+        , TokenListParser<FeatherTokenType, BinaryOperatorType> @operator)
+    {
+        return operand
+            .Then(leftOperand => @operator
+                .Then(op => operand
+                    .Select(rightOperand => (op, rightOperand)))
+                .Many()
+                .Select(pairs =>
+                {
+                    var expr = leftOperand;
+                    foreach (var (op, right) in pairs)
+                    {
+                        expr = new FeatherExpression.BinaryExpression(expr, op, right);
+                    }
+                    return expr;
+                }));
     }
 }

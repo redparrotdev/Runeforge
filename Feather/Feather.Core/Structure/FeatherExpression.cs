@@ -9,4 +9,5 @@ public abstract record FeatherExpression
     public record IdentifierExpressing(string Name) : FeatherExpression;
     public record LabelIdentifierExpression(string Label) : FeatherExpression;
     public record CharacterNameExpression(FeatherExpression Value) : FeatherExpression;
+    public record BinaryExpression(FeatherExpression Left, BinaryOperatorType Operator, FeatherExpression Right) : FeatherExpression;
 }
