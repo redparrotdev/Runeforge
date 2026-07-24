@@ -239,8 +239,145 @@ public sealed class FeatherScriptRunner
                 return new StrongBox<string>(labelExpression.Label);
             case FeatherExpression.CharacterNameExpression charNameExpression:
                 return EvaluateExpression(charNameExpression.Value);
+            case FeatherExpression.BinaryExpression binaryExpr:
+                return EvaluateBinaryExpression(binaryExpr);
             default:
                 throw new InvalidOperationException($"Unsupported expression type: {expr.GetType().FullName}");
+        }
+    }
+
+    private object? EvaluateBinaryExpression(FeatherExpression.BinaryExpression binaryExpression)
+    {
+        var left = binaryExpression.Left;
+        var right = binaryExpression.Right;
+        var op = binaryExpression.Operator;
+
+        var leftValue = EvaluateExpression(left);
+        var rightValue = EvaluateExpression(right);
+
+        switch (op)
+        {
+            case BinaryOperatorType.Plus:
+            {
+                // "Hello " + "World" = "Hello World"
+                if (leftValue is StrongBox<string> leftStr && rightValue is StrongBox<string> rightStr)
+                {
+                    return new StrongBox<string>(leftStr.Value + rightStr.Value);
+                }
+                // 5 + 10 = 15
+                if (leftValue is StrongBox<float> leftFloat && rightValue is StrongBox<float> rightFloat)
+                {
+                    return new StrongBox<float>(leftFloat.Value + rightFloat.Value);
+                }
+                // true + false = 1
+                if (leftValue is StrongBox<bool> leftBool && rightValue is StrongBox<bool> rightBool)
+                {
+                    return new StrongBox<float>(Convert.ToSingle(leftBool.Value) + Convert.ToSingle(rightBool.Value));
+                }
+                // 5 + true = 6
+                if (BinaryExpressionEvaluationHelper.InAnyOrder<float, bool>(leftValue, rightValue, out var floatValue, out var boolValue))
+                {
+                    return new StrongBox<float>(floatValue.Value + Convert.ToSingle(boolValue.Value));
+                }
+                // TODO: Make own exception type
+                throw new InvalidOperationException($"Unsupported operand types for '+' operator: {left.GetType().Name} and {right.GetType().Name}");
+            }
+            case BinaryOperatorType.Minus:
+            {
+                // "Hello World!" - "World" = "Hello !"
+                if (leftValue is StrongBox<string> leftString && rightValue is StrongBox<string> rightString)
+                {
+                    return new StrongBox<string>(leftString.Value!.Replace(rightString.Value!, string.Empty));
+                }
+                // 5 - 10 = -5
+                if (leftValue is StrongBox<float> leftFloat && rightValue is StrongBox<float> rightFloat)
+                {
+                    return new StrongBox<float>(leftFloat.Value - rightFloat.Value);
+                }
+                // true - false = 1
+                if (leftValue is StrongBox<bool> leftBool && rightValue is StrongBox<bool> rightBool)
+                {
+                    return new StrongBox<float>(Convert.ToSingle(leftBool.Value) - Convert.ToSingle(rightBool.Value));
+                }
+                // 5 - true = 4
+                if (leftValue is StrongBox<float> leftFloat2 && rightValue is StrongBox<bool> rightBool2)
+                {
+                    return new StrongBox<float>(leftFloat2.Value - Convert.ToSingle(rightBool2.Value));
+                }
+                // true - 5 = -4
+                if (leftValue is StrongBox<bool> leftBool2 && rightValue is StrongBox<float> rightFloat2)
+                {
+                    return new StrongBox<float>(Convert.ToSingle(leftBool2.Value) - rightFloat2.Value);
+                }
+                throw new InvalidOperationException($"Unsupported operand types for '-' operator: {left.GetType().Name} and {right.GetType().Name}");
+            }
+            case BinaryOperatorType.Multiply:
+            {
+                // "Hello " * 3 = "Hello Hello Hello "
+                if (leftValue is StrongBox<string> leftString && rightValue is StrongBox<float> rightFloat)
+                {
+                    return new StrongBox<string>(string.Concat(Enumerable.Repeat(leftString.Value!, (int)rightFloat.Value)));
+                }
+                // 3 * 3 = 9
+                if (leftValue is StrongBox<float> leftFloat && rightValue is StrongBox<float> rightFloat2)
+                {
+                    return new StrongBox<float>(leftFloat.Value * rightFloat2.Value);
+                }
+                // true * false = 0
+                if (leftValue is StrongBox<bool> leftBool && rightValue is StrongBox<bool> rightBool)
+                {
+                    return new StrongBox<float>(Convert.ToSingle(leftBool.Value) * Convert.ToSingle(rightBool.Value));
+                }
+                // 5 * true = 5
+                if (BinaryExpressionEvaluationHelper.InAnyOrder<float, bool>(leftValue, rightValue, out var floatValue, out var boolValue))
+                {
+                    return new StrongBox<float>(floatValue.Value * Convert.ToSingle(boolValue.Value));
+                }
+                throw new InvalidOperationException($"Unsupported operand types for '*' operator: {left.GetType().Name} and {right.GetType().Name}");
+            }
+            case BinaryOperatorType.Divide:
+            {
+                const string divideByZeroExceptionMessage = "Division by zero is not allowed.";
+
+                if (leftValue is StrongBox<float> leftFloat && rightValue is StrongBox<float> rightFloat)
+                {
+                    if (rightFloat.Value.Equals(0f))
+                    {
+                        throw new DivideByZeroException(divideByZeroExceptionMessage);
+                    }
+
+                    return new StrongBox<float>(leftFloat.Value / rightFloat.Value);
+                }
+                if (leftValue is StrongBox<bool> leftBool && rightValue is StrongBox<bool> rightBool)
+                {
+                    if (!rightBool.Value)
+                    {
+                        throw new DivideByZeroException(divideByZeroExceptionMessage);
+                    }
+
+                    return new StrongBox<float>(Convert.ToSingle(leftBool.Value) / Convert.ToSingle(rightBool.Value));
+                }
+                if (leftValue is StrongBox<float> leftFloat2 && rightValue is StrongBox<bool> rightBool2)
+                {
+                    if (!rightBool2.Value)
+                    {
+                        throw new DivideByZeroException(divideByZeroExceptionMessage);
+                    }
+                    return new StrongBox<float>(leftFloat2.Value / Convert.ToSingle(rightBool2.Value));
+                }
+                if (leftValue is StrongBox<bool> leftBool2 && rightValue is StrongBox<float> rightFloat2)
+                {
+                    if (rightFloat2.Value.Equals(0f))
+                    {
+                        throw new DivideByZeroException(divideByZeroExceptionMessage);
+                    }
+                    return new StrongBox<float>(Convert.ToSingle(leftBool2.Value) / rightFloat2.Value);
+                }
+                throw new InvalidOperationException($"Unsupported operand types for '/' operator: {left.GetType().Name} and {right.GetType().Name}");
+            }
+            default:
+                // TODO: Make own exception type
+                throw new InvalidOperationException("Unsupported binary operator: " + op);
         }
     }
 
