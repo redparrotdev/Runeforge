@@ -1,4 +1,4 @@
-﻿using Feather.Core.Exceptions.BinaryOperationsExceptions;
+﻿using Feather.Core.Exceptions;
 using Feather.Core.Structure;
 using System.Runtime.CompilerServices;
 

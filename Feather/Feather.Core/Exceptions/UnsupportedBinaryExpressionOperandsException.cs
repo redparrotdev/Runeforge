@@ -1,6 +1,6 @@
 ﻿using Feather.Core.Structure;
 
-namespace Feather.Core.Exceptions.BinaryOperationsExceptions;
+namespace Feather.Core.Exceptions;
 
 public sealed class UnsupportedBinaryExpressionOperandsException : FeatherException
 {

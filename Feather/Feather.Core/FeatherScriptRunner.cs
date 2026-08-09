@@ -1,4 +1,4 @@
-﻿using Feather.Core.Exceptions.BinaryOperationsExceptions;
+﻿using Feather.Core.Exceptions;
 using Feather.Core.Helpers;
 using Feather.Core.Models;
 using Feather.Core.Structure;
@@ -110,8 +110,7 @@ public sealed class FeatherScriptRunner
     {
         if (!_labelsMap.TryGetValue(label, out var labelDecl))
         {
-            // TODO: Make own exception type
-            throw new InvalidOperationException($"Label '{label}' is not defined.");
+            throw new UndefinedLabelException(label);
         }
 
         _currentLabel = label;
@@ -210,7 +209,7 @@ public sealed class FeatherScriptRunner
                 break;
             default:
                 _isFinished = false;
-                throw new InvalidOperationException($"Unsupported statement type: {stmt.GetType().FullName}");
+                throw new UnsupportedStatementTypeException(stmt.GetType());
         }
     }
 
@@ -233,8 +232,7 @@ public sealed class FeatherScriptRunner
                     return value;
                 }
 
-                // TODO: Make own exception type
-                throw new InvalidOperationException($"Variable '{idExpr.Name}' is not defined.");
+                throw new VariableNotDefinedException(idExpr.Name);
             }
             case FeatherExpression.LabelIdentifierExpression labelExpression:
                 return new StrongBox<string>(labelExpression.Label);
@@ -243,7 +241,7 @@ public sealed class FeatherScriptRunner
             case FeatherExpression.BinaryExpression binaryExpr:
                 return EvaluateBinaryExpression(binaryExpr);
             default:
-                throw new InvalidOperationException($"Unsupported expression type: {expr.GetType().FullName}");
+                throw new UnsupportedExpressionTypeException(expr.GetType());
         }
     }
 
@@ -284,7 +282,7 @@ public sealed class FeatherScriptRunner
         var characterName = EvaluateExpression(dialogLine.Character) switch
         {
             StrongBox<string> str => str.Value!,
-            _ => throw new InvalidOperationException($"Unsupported character name expression type: {dialogLine.Character.GetType().FullName}")
+            _ => throw new UnsupportedCharacterNameExpressionTypeException(dialogLine.Character.GetType())
         };
 
         // TODO: Add text processing through expressions in text
@@ -303,8 +301,7 @@ public sealed class FeatherScriptRunner
     {
         if (!_scriptVariables.ContainsKey(stmt.Variable))
         {
-            // TODO: Make own exception type
-            throw new InvalidOperationException($"Variable '{stmt.Variable}' is not defined.");
+            throw new VariableNotDefinedException(stmt.Variable);
         }
 
         var newValue = EvaluateExpression(stmt.Value);
@@ -316,7 +313,7 @@ public sealed class FeatherScriptRunner
         var label = EvaluateExpression(stmt.Label) switch
         {
             StrongBox<string> str => str.Value!,
-            _ => throw new InvalidOperationException($"Unsupported label expression type: {stmt.Label.GetType().FullName}")
+            _ => throw new UnsupportedLabelExpressionTypeException(stmt.Label.GetType())
         };
 
         JumpToLabel(label);

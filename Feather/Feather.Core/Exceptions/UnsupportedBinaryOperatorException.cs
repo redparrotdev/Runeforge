@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Feather.Core.Exceptions.BinaryOperationsExceptions;
+namespace Feather.Core.Exceptions;
 
 public sealed class UnsupportedBinaryOperatorException : FeatherException
 {
