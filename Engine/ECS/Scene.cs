@@ -9,17 +9,19 @@ public abstract class Scene : IDisposable
 {
     private bool _disposed;
 
+    public readonly Runeforge Engine;
     public readonly ContentManager Content;
     public readonly GraphicsDevice GraphicsDevice;
     public readonly GameServiceContainer Services;
     protected readonly SpriteBatch SpriteBatch;
 
-    protected Scene(Game game)
+    protected Scene(Runeforge engine)
     {
-        Content = new ContentManager(game.Services, game.Content.RootDirectory);
-        GraphicsDevice = game.GraphicsDevice;
+        Engine = engine;
+        Content = new ContentManager(engine.Services, engine.Content.RootDirectory);
+        GraphicsDevice = engine.GraphicsDevice;
         SpriteBatch = new SpriteBatch(GraphicsDevice);
-        Services = game.Services;
+        Services = engine.Services;
     }
 
     public virtual void Load()
@@ -27,7 +29,7 @@ public abstract class Scene : IDisposable
 
     public virtual void Unload()
     {
-        Content.Unload();
+        Dispose();
     }
 
     public virtual void Update(GameTime gameTime)
