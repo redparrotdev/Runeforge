@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.7.11911.148 stable
+VisualStudioVersion = 18.7.11911.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{00A46740-4C2C-4603-A1C8-100C99FB6F01}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{9FAA2028-4F20-4AEC-B223-8F1DBFC3443B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{8468B5E4-627D-44F6-BBBB-C7BBD3F2B706}"
 EndProject
@@ -14,6 +12,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECS", "ECS\ECS.csproj", "{76D2052F-F546-4E0B-A04D-65C02EBFA597}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECS.Tests", "ECS.Tests\ECS.Tests.csproj", "{B335A789-E127-4A5A-822A-B8703DB4CC19}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lore - Dialog Engine", "Lore - Dialog Engine", "{DF60851B-226E-4A90-90D2-66FA8916D8A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lore", "Lore\Lore\Lore.csproj", "{729DA592-54AB-4EFD-9ACA-345BF3A41F87}"
@@ -28,10 +27,6 @@ Global
 		{00A46740-4C2C-4603-A1C8-100C99FB6F01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00A46740-4C2C-4603-A1C8-100C99FB6F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00A46740-4C2C-4603-A1C8-100C99FB6F01}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9FAA2028-4F20-4AEC-B223-8F1DBFC3443B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9FAA2028-4F20-4AEC-B223-8F1DBFC3443B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9FAA2028-4F20-4AEC-B223-8F1DBFC3443B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9FAA2028-4F20-4AEC-B223-8F1DBFC3443B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3580EDAE-C885-4AE1-A770-02B3A1FE6B49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3580EDAE-C885-4AE1-A770-02B3A1FE6B49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3580EDAE-C885-4AE1-A770-02B3A1FE6B49}.Release|Any CPU.ActiveCfg = Release|Any CPU

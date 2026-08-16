@@ -1,5 +1,4 @@
-﻿using Engine.ECS.Utils;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,7 +9,6 @@ public abstract class Scene : IDisposable
 {
     private bool _disposed;
 
-    public readonly EntitiesList Entities;
     public readonly ContentManager Content;
     public readonly GraphicsDevice GraphicsDevice;
     public readonly GameServiceContainer Services;
@@ -18,7 +16,6 @@ public abstract class Scene : IDisposable
 
     protected Scene(Game game)
     {
-        Entities = new(this);
         Content = new ContentManager(game.Services, game.Content.RootDirectory);
         GraphicsDevice = game.GraphicsDevice;
         SpriteBatch = new SpriteBatch(GraphicsDevice);
@@ -35,29 +32,10 @@ public abstract class Scene : IDisposable
 
     public virtual void Update(GameTime gameTime)
     {
-        Entities.Update(gameTime);
     }
 
     public virtual void Draw(GameTime gameTime)
     {
-        SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-        Entities.Draw(SpriteBatch, gameTime);
-        SpriteBatch.End();
-    }
-
-    public void AddEntity(Entity entity)
-    {
-        Entities.Add(entity);
-    }
-
-    public void RemoveEntity(Entity entity)
-    {
-        Entities.Remove(entity);
-    }
-
-    public Entity FindEntityByName(string name)
-    {
-        return Entities.FindByName(name);
     }
 
     protected virtual void Dispose(bool disposing)
