@@ -2,9 +2,9 @@
 
 namespace ECS.Tests.TestSystems;
 
-internal class InitOthersSystem : IInitSystem
+internal sealed class InitOthersSystem : IInitSystem
 {
-    public World World { get; set; }
+    public World World { get; set; } = null!;
 
     private readonly IEnumerable<IInitSystem> _systems;
 

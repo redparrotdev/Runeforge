@@ -11,7 +11,7 @@ internal sealed class SimpleInitSystem : IInitSystem
         _resultRef = resultRef;
     }
 
-    public World World { get; set; }
+    public World World { get; set; } = null!;
 
     public void Dispose()
     {
