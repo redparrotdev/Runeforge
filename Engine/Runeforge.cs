@@ -18,7 +18,7 @@ public class Runeforge : Game
 
     public readonly RuneforgeSettings Settings;
     public readonly SceneManager SceneManager;
-    public readonly DebugUI DebugUI;
+    public DebugUI DebugUI { get; private set; }
 
     public Runeforge(RuneforgeSettings settings)
     {
@@ -33,7 +33,6 @@ public class Runeforge : Game
         Window.Title = settings.Title;
 
         SceneManager = new SceneManager();
-        DebugUI = new DebugUI(this);
     }
 
     public Runeforge() : this(RuneforgeSettings.Default)
@@ -50,6 +49,8 @@ public class Runeforge : Game
         _graphics.PreferredBackBufferWidth = Settings.Widht;
         _graphics.PreferredBackBufferHeight = Settings.Height;
         _graphics.ApplyChanges();
+
+        DebugUI = new DebugUI(this);
 
         base.Initialize();
     }
