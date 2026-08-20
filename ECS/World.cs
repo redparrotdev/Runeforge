@@ -13,6 +13,7 @@ public sealed class World : IDisposable
     private readonly HashSet<Entity> _entities = new(capacity: 256);
     private readonly List<Entity> _entitiesToAdd = new(capacity: 256);
     private readonly List<Entity> _entitiesToRemove = new(capacity: 256);
+    private bool _entityColletionsDirty = false;
 
     public IReadOnlyCollection<Entity> Entities => _entities;
 
@@ -38,6 +39,7 @@ public sealed class World : IDisposable
     {
         if (IsUpdating)
         {
+            _entityColletionsDirty = true;
             _entitiesToAdd.Add(entity);
             return;
         }
@@ -50,6 +52,7 @@ public sealed class World : IDisposable
     {
         if (IsUpdating)
         {
+            _entityColletionsDirty = true;
             _entitiesToRemove.Add(entity);
             return;
         }
@@ -122,9 +125,12 @@ public sealed class World : IDisposable
         foreach (var (_, system) in _sortedSystems)
         {
             system.Update(deltaTime);
-            IsUpdating = false;
-            UpdateEntitiesCollections();
-            IsUpdating = true;
+            if (_entityColletionsDirty)
+            {
+                IsUpdating = false;
+                UpdateEntitiesCollections();
+                IsUpdating = true;
+            }
         }
         IsUpdating = false;
     }
@@ -150,6 +156,7 @@ public sealed class World : IDisposable
 
         _entitiesToAdd.Clear();
         _entitiesToRemove.Clear();
+        _entityColletionsDirty = false;
     }
 
     #endregion
