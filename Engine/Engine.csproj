@@ -1,6 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <PackageId>Runeforge.$(AssemblyName)</PackageId>
+    <Title>Runeforge.Engine</Title>
+    <Authors>redparrotdev</Authors>
+    <Company>redparrotdev</Company>
+    <Product>Runeforge</Product>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AlexMacocian.MonoGame.ImGuiNet" Version="1.1.0" />

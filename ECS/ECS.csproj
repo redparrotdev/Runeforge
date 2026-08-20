@@ -4,6 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>Runeforge,$(AssemblyName)</PackageId>
+    <Title>Runeforge.ECS</Title>
+    <Authors>redparrotdev</Authors>
+    <Company>redparrotdev</Company>
+    <Product>Runeforge</Product>
   </PropertyGroup>
 
 </Project>
