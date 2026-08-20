@@ -2,11 +2,11 @@
 
 namespace ECS;
 
-public readonly struct Entity
+public sealed class Entity
 {
     public readonly ulong Id;
 
-    public Entity(ulong id)
+    internal Entity(ulong id)
     {
         Id = id;
     }
