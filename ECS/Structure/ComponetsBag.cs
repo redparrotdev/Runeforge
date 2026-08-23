@@ -10,6 +10,7 @@ internal sealed class ComponetsBag<T> : IComponentsBag<T>, IInternalComponentBag
     public void AddFor(Entity entity, T component)
     {
         _componentsLookup.Add(entity.Id, component);
+        entity.EntityData.AddOwnedType(typeof(T));
     }
 
     public T RemoveFor(Entity entity)
@@ -18,6 +19,7 @@ internal sealed class ComponetsBag<T> : IComponentsBag<T>, IInternalComponentBag
 
         var component = GetFor(entity);
         _componentsLookup.Remove(entity.Id);
+        entity.EntityData.RemoveOwnedType(typeof(T));
 
         return component;
     }

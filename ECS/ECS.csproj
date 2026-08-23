@@ -10,6 +10,7 @@
     <Company>redparrotdev</Company>
     <Product>Runeforge</Product>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<Version>1.0.1</Version>
   </PropertyGroup>
 
 </Project>
